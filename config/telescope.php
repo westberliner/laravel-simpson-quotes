@@ -76,9 +76,9 @@ return [
     */
 
     'middleware' => [
-        'web',
-        Authorize::class,
+        \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class
     ],
+    'guard' => 'sanctum',
 
     /*
     |--------------------------------------------------------------------------
