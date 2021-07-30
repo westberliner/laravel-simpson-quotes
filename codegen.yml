@@ -1,0 +1,24 @@
+schema: 'http://sq.devl/graphql'
+documents: 'resources/js/api/**/*.gql'
+generates:
+  resources/js/types/queries.d.ts:
+    plugins:
+      - apollo-typed-documents/lib/codegenTypedDocuments
+    config:
+      typesModule: "@codegen-types"
+  resources/js/types/graphql.types.ts:
+    plugins:
+      - add:
+          placement: prepend
+          content: 'declare module "@codegen-types" {'
+      - add:
+          placement: append
+          content: "}"
+      - typescript
+      - typescript-operations
+
+#  resources/js/types/queries.d.ts:
+#    - typescript-graphql-files-modules
+#  resources/js/types/graphql.types.ts:
+#    - typescript
+#    - typescript-operations

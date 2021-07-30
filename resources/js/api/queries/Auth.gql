@@ -1,0 +1,31 @@
+#Fragments
+fragment authUserFields on User {
+    id
+    name
+    email
+}
+
+fragment accessToken on AccessToken {
+    token
+    token_type
+}
+
+#Queries
+query getMe {
+    user {
+        ...authUserFields
+    }
+}
+
+#Mutations
+mutation login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+        ...accessToken
+    }
+}
+
+mutation logout {
+    logout {
+        ...authUserFields
+    }
+}

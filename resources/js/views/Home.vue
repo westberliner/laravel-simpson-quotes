@@ -3,7 +3,7 @@
         <h1>
             Basic template
         </h1>
-        <p>
+        <p class="">
             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ad, expedita? Officiis autem, omnis hic similique facere tempora culpa animi quisquam commodi illum sapiente error fugiat? Nobis, architecto? Sapiente, laborum sint!
         </p>
     </div>
