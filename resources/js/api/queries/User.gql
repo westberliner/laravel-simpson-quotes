@@ -6,9 +6,11 @@ fragment userFields on User {
 }
 
 #Queries
-query getUsers {
-    users {
-        ...userFields
+query getUsers($currentPage: Int!) {
+    users(page: $currentPage) {
+        data {
+            ...userFields
+        }
     }
 }
 

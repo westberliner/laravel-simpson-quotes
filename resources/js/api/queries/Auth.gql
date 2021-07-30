@@ -11,8 +11,8 @@ fragment accessToken on AccessToken {
 }
 
 #Queries
-query getMe {
-    user {
+query getAuthorizedUser {
+    me {
         ...authUserFields
     }
 }

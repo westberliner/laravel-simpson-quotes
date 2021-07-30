@@ -25237,6 +25237,7 @@ var authLink = (0,apollo_link_context__WEBPACK_IMPORTED_MODULE_2__.setContext)(f
   var metaElement = document.querySelector('meta[name="csrf-token"]');
   var token = metaElement ? metaElement.content : null;
   var authorization = localStorage.getItem('authorization');
+  console.log(authorization);
   return {
     headers: _objectSpread(_objectSpread({}, headers), {}, {
       'X-CSRF-TOKEN': token !== null && token !== void 0 ? token : '',
@@ -25276,7 +25277,11 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 
-var app = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)({});
+var app = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)({
+  mounted: function mounted() {
+    this.$store.getters.me;
+  }
+});
 app.use(_store_Store__WEBPACK_IMPORTED_MODULE_1__.store, _store_Store__WEBPACK_IMPORTED_MODULE_1__.key);
 app.use(_router_Route__WEBPACK_IMPORTED_MODULE_2__.default);
 app.component('main-menu', _components_MainMenu_vue__WEBPACK_IMPORTED_MODULE_3__.default);
@@ -25429,46 +25434,47 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mutations: {
-    "AUTH_REQUEST": function AUTH_REQUEST(state) {
+    'AUTH_REQUEST': function AUTH_REQUEST(state) {
       state.status = 'loading';
     },
-    "AUTH_SUCCESS": function AUTH_SUCCESS(state, token) {
+    'AUTH_SUCCESS': function AUTH_SUCCESS(state, token) {
       state.status = 'success';
       state.token = token;
     },
-    "AUTH_ERROR": function AUTH_ERROR(state) {
+    'AUTH_ERROR': function AUTH_ERROR(state) {
       state.status = 'error';
     }
   },
   actions: {
-    "AUTH_REQUEST": function AUTH_REQUEST(_ref, credentials) {
+    'AUTH_REQUEST': function AUTH_REQUEST(_ref, credentials) {
       var commit = _ref.commit,
           dispatch = _ref.dispatch;
-      _api_Client__WEBPACK_IMPORTED_MODULE_1__.default.defaultClient.mutate({
+      return _api_Client__WEBPACK_IMPORTED_MODULE_1__.default.defaultClient.mutate({
         mutation: _api_queries_Auth_gql__WEBPACK_IMPORTED_MODULE_0__.login,
         variables: credentials
-      }); // return new Promise((resolve, reject) => { // The Promise used for router redirect in login
-      //     commit(AUTH_REQUEST)
-      //     axios({url: 'auth', data: user, method: 'POST' })
-      //         .then(resp => {
-      //             const token = resp.data.token
-      //             localStorage.setItem('authorization', token) // store the token in localstorage
-      //             commit(AUTH_SUCCESS, token)
-      //             // you have your token, now log in your user :)
-      //             dispatch(USER_REQUEST)
-      //             resolve(resp)
-      //         })
-      //         .catch(err => {
-      //             commit(AUTH_ERROR, err)
-      //             localStorage.removeItem('authorization') // if the request fails, remove any possible user token if possible
-      //             reject(err)
-      //         })
-      // })
+      }).then(function (result) {
+        commit('AUTH_REQUEST');
+        var authorizationToken = "".concat(result.data.login.token_type, " ").concat(result.data.login.token);
+        localStorage.setItem('authorization', authorizationToken);
+        _api_Client__WEBPACK_IMPORTED_MODULE_1__.default.defaultClient.resetStore();
+      })["catch"](function (error) {
+        commit('AUTH_ERROR', error);
+        localStorage.removeItem('authorization'); // if the request fails, remove any possible user token if possible
+
+        throw error;
+      });
     }
   },
   getters: {
     me: function me(state, getters, rootState) {
-      console.log(this);
+      console.log(state);
+      _api_Client__WEBPACK_IMPORTED_MODULE_1__.default.defaultClient.query({
+        query: _api_queries_Auth_gql__WEBPACK_IMPORTED_MODULE_0__.getAuthorizedUser
+      }).then(function (result) {
+        console.log(result);
+      })["catch"](function (error) {
+        throw error;
+      });
     },
     isAuthenticated: function isAuthenticated(state) {
       return !!state.token;
@@ -25576,7 +25582,6 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     login: function login() {
       var credentials = this.form;
-      console.log(this.$apolloProvider);
       this.$store.dispatch('AUTH_REQUEST', credentials).then(function () {//this.$router.push('/')
       });
     }
@@ -26067,8 +26072,8 @@ gql["default"] = gql;
 /***/ ((module) => {
 
 
-    var doc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"authUserFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"name"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"email"},"arguments":[],"directives":[]}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"accessToken"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AccessToken"}},"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"token_type"},"arguments":[],"directives":[]}]}},{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMe"},"variableDefinitions":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"authUserFields"},"directives":[]}]}}]}},{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"login"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},"directives":[]},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},"directives":[]}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"accessToken"},"directives":[]}]}}]}},{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"logout"},"variableDefinitions":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logout"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"authUserFields"},"directives":[]}]}}]}}],"loc":{"start":0,"end":419}};
-    doc.loc.source = {"body":"#Fragments\nfragment authUserFields on User {\n    id\n    name\n    email\n}\n\nfragment accessToken on AccessToken {\n    token\n    token_type\n}\n\n#Queries\nquery getMe {\n    user {\n        ...authUserFields\n    }\n}\n\n#Mutations\nmutation login($email: String!, $password: String!) {\n    login(email: $email, password: $password) {\n        ...accessToken\n    }\n}\n\nmutation logout {\n    logout {\n        ...authUserFields\n    }\n}\n","name":"GraphQL request","locationOffset":{"line":1,"column":1}};
+    var doc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"authUserFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"name"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"email"},"arguments":[],"directives":[]}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"accessToken"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AccessToken"}},"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"token_type"},"arguments":[],"directives":[]}]}},{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getAuthorizedUser"},"variableDefinitions":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"authUserFields"},"directives":[]}]}}]}},{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"login"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},"directives":[]},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},"directives":[]}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"accessToken"},"directives":[]}]}}]}},{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"logout"},"variableDefinitions":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logout"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"authUserFields"},"directives":[]}]}}]}}],"loc":{"start":0,"end":429}};
+    doc.loc.source = {"body":"#Fragments\nfragment authUserFields on User {\n    id\n    name\n    email\n}\n\nfragment accessToken on AccessToken {\n    token\n    token_type\n}\n\n#Queries\nquery getAuthorizedUser {\n    me {\n        ...authUserFields\n    }\n}\n\n#Mutations\nmutation login($email: String!, $password: String!) {\n    login(email: $email, password: $password) {\n        ...accessToken\n    }\n}\n\nmutation logout {\n    logout {\n        ...authUserFields\n    }\n}\n","name":"GraphQL request","locationOffset":{"line":1,"column":1}};
   
 
     var names = {};
@@ -26190,7 +26195,7 @@ gql["default"] = gql;
         
         module.exports.accessToken = oneQuery(doc, "accessToken");
         
-        module.exports.getMe = oneQuery(doc, "getMe");
+        module.exports.getAuthorizedUser = oneQuery(doc, "getAuthorizedUser");
         
         module.exports.login = oneQuery(doc, "login");
         

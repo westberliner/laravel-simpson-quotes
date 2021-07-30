@@ -44,7 +44,6 @@ export default {
     methods: {
         login() {
             const credentials = this.form;
-            console.log(this.$apolloProvider);
             this.$store.dispatch('AUTH_REQUEST', credentials).then(() => {
                 //this.$router.push('/')
             });

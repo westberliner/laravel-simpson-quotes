@@ -90,14 +90,20 @@ export type PaginatorInfo = {
 
 export type Query = {
   __typename?: 'Query';
-  users: Array<User>;
   user?: Maybe<User>;
   me?: Maybe<User>;
+  users?: Maybe<UserPaginator>;
 };
 
 
 export type QueryUserArgs = {
   id?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryUsersArgs = {
+  first?: Maybe<Scalars['Int']>;
+  page?: Maybe<Scalars['Int']>;
 };
 
 /** Information about pagination using a simple paginator. */
@@ -142,6 +148,15 @@ export type User = {
   updated_at: Scalars['DateTime'];
 };
 
+/** A paginated list of User items. */
+export type UserPaginator = {
+  __typename?: 'UserPaginator';
+  /** Pagination information about the list of items. */
+  paginatorInfo: PaginatorInfo;
+  /** A list of User items. */
+  data: Array<User>;
+};
+
 export type AuthUserFieldsFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'name' | 'email'>
@@ -152,12 +167,12 @@ export type AccessTokenFragment = (
   & Pick<AccessToken, 'token' | 'token_type'>
 );
 
-export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAuthorizedUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = (
+export type GetAuthorizedUserQuery = (
   { __typename?: 'Query' }
-  & { user?: Maybe<(
+  & { me?: Maybe<(
     { __typename?: 'User' }
     & AuthUserFieldsFragment
   )> }
@@ -193,14 +208,19 @@ export type UserFieldsFragment = (
   & Pick<User, 'id' | 'name' | 'email'>
 );
 
-export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetUsersQueryVariables = Exact<{
+  currentPage: Scalars['Int'];
+}>;
 
 
 export type GetUsersQuery = (
   { __typename?: 'Query' }
-  & { users: Array<(
-    { __typename?: 'User' }
-    & UserFieldsFragment
+  & { users?: Maybe<(
+    { __typename?: 'UserPaginator' }
+    & { data: Array<(
+      { __typename?: 'User' }
+      & UserFieldsFragment
+    )> }
   )> }
 );
 
