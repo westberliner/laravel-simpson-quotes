@@ -25279,7 +25279,11 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 var app = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)({
   mounted: function mounted() {
-    this.$store.getters.me;
+    var store = this.$store.getters;
+
+    if (store.isAuthenticated && store.authenticatedUser === null) {
+      this.$store.dispatch('AUTH_AUTHENTICATE');
+    }
   }
 });
 app.use(_store_Store__WEBPACK_IMPORTED_MODULE_1__.store, _store_Store__WEBPACK_IMPORTED_MODULE_1__.key);
@@ -25428,53 +25432,64 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   state: function state() {
     return {
-      token: localStorage.getItem("authorization") || "",
+      token: localStorage.getItem('authorization') || "",
       status: "",
-      hasLoadedOnce: false
+      authenticatedUser: null
     };
   },
   mutations: {
     'AUTH_REQUEST': function AUTH_REQUEST(state) {
       state.status = 'loading';
     },
-    'AUTH_SUCCESS': function AUTH_SUCCESS(state, token) {
+    'AUTH_SUCCESS': function AUTH_SUCCESS(state, authorizationToken) {
       state.status = 'success';
-      state.token = token;
+      state.token = authorizationToken;
+      localStorage.setItem('authorization', authorizationToken);
+      _api_Client__WEBPACK_IMPORTED_MODULE_1__.default.defaultClient.resetStore();
     },
     'AUTH_ERROR': function AUTH_ERROR(state) {
       state.status = 'error';
+      state.authenticatedUser = null;
+      localStorage.removeItem('authorization');
+    },
+    'AUTH_AUTHENTICATE': function AUTH_AUTHENTICATE(state, authenticatedUser) {
+      state.status = 'success';
+      state.authenticatedUser = authenticatedUser;
     }
   },
   actions: {
     'AUTH_REQUEST': function AUTH_REQUEST(_ref, credentials) {
       var commit = _ref.commit,
           dispatch = _ref.dispatch;
+      commit('AUTH_REQUEST'); // todo: abstract request
+
       return _api_Client__WEBPACK_IMPORTED_MODULE_1__.default.defaultClient.mutate({
         mutation: _api_queries_Auth_gql__WEBPACK_IMPORTED_MODULE_0__.login,
         variables: credentials
       }).then(function (result) {
-        commit('AUTH_REQUEST');
         var authorizationToken = "".concat(result.data.login.token_type, " ").concat(result.data.login.token);
-        localStorage.setItem('authorization', authorizationToken);
-        _api_Client__WEBPACK_IMPORTED_MODULE_1__.default.defaultClient.resetStore();
+        commit('AUTH_SUCCESS', authorizationToken);
       })["catch"](function (error) {
         commit('AUTH_ERROR', error);
-        localStorage.removeItem('authorization'); // if the request fails, remove any possible user token if possible
-
+        throw error;
+      });
+    },
+    'AUTH_AUTHENTICATE': function AUTH_AUTHENTICATE(_ref2) {
+      var commit = _ref2.commit,
+          dispatch = _ref2.dispatch;
+      return _api_Client__WEBPACK_IMPORTED_MODULE_1__.default.defaultClient.query({
+        query: _api_queries_Auth_gql__WEBPACK_IMPORTED_MODULE_0__.getAuthorizedUser
+      }).then(function (result) {
+        commit('AUTH_AUTHENTICATE', result.data.me);
+      })["catch"](function (error) {
+        commit('AUTH_ERROR', error);
         throw error;
       });
     }
   },
   getters: {
-    me: function me(state, getters, rootState) {
-      console.log(state);
-      _api_Client__WEBPACK_IMPORTED_MODULE_1__.default.defaultClient.query({
-        query: _api_queries_Auth_gql__WEBPACK_IMPORTED_MODULE_0__.getAuthorizedUser
-      }).then(function (result) {
-        console.log(result);
-      })["catch"](function (error) {
-        throw error;
-      });
+    authenticatedUser: function authenticatedUser(state) {
+      return state.authenticatedUser;
     },
     isAuthenticated: function isAuthenticated(state) {
       return !!state.token;

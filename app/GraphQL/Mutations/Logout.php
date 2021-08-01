@@ -8,18 +8,17 @@ use Illuminate\Support\Facades\Auth;
 class Logout
 {
     /**
-     * @param  null  $_
-     * @param  array<string, mixed>  $args
+     * @param null $_
+     * @param array<string, mixed> $args
      */
     public function __invoke($_, array $args): ?User
     {
-        $guard = Auth::guard(config('sanctum.guard', 'api'));
+        $guard = Auth::guard(config('sanctum.guard', 'web'));
 
         /** @var User|null $user */
         $user = $guard->user();
         $guard->logout();
-
-        //$user->currentAccessToken()->delete();
+        $user->tokens()->delete();
 
         return $user;
     }

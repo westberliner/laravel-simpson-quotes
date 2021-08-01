@@ -9,8 +9,8 @@ use Laravel\Sanctum\NewAccessToken;
 class Login
 {
     /**
-     * @param  null  $_
-     * @param  array<string, mixed>  $args
+     * @param null  $_
+     * @param array<string, mixed> $args
      */
     public function __invoke($_, array $args): array
     {
@@ -20,11 +20,7 @@ class Login
             throw new Error('Invalid credentials.');
         }
 
-        /**
-         * Since we successfully logged in, this can no longer be `null`.
-         *
-         * @var User $user
-         */
+        /** @var User $user */
         $user = $guard->user();
         /** @var NewAccessToken $token */
         $token = $user->createToken('graphql-admin');

@@ -25,10 +25,7 @@ type AccessToken {
 }
 
 type Mutation {
-    "Log in to a new session and get the user."
     login(email: String!, password: String!): AccessToken!
-
-    "Log out from the current session, showing the user one last time."
     logout: User @guard
 }
 
