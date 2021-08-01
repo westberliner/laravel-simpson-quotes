@@ -45,8 +45,12 @@ export default {
         login() {
             const credentials = this.form;
             this.$store.dispatch('AUTH_REQUEST', credentials).then(() => {
-                //this.$router.push('/')
-            });
+                this.$store.dispatch('AUTH_AUTHENTICATE');
+                this.$router.push('/')
+            }).catch(error => {
+                // Todo show error.
+                console.log(error)
+            })
         }
     }
 };

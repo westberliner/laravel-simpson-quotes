@@ -1,27 +1,22 @@
-import { createWebHistory, createRouter } from "vue-router";
-import Home from "../views/Home.vue";
-import Login from "../views/Login.vue";
-import Dashboard from "../views/Dashboard.vue";
+import { createWebHistory, createRouter } from 'vue-router';
+import { store } from '../store/Store';
+import Home from '../views/Home.vue';
+import Login from '../views/Login.vue';
+import Dashboard from '../views/Dashboard.vue';
 
 const routes = [{
-        path: "/",
-        name: "Home",
+        path: '/',
+        name: 'Home',
         component: Home
     }, {
-        path: "/login",
-        name: "Login",
+        path: '/login',
+        name: 'Login',
         component: Login,
         meta: { guestOnly: true }
     }, {
-        path: "/logout",
-        name: "Logout",
-        component: {},
-        meta: { guestOnly: true }
-    }, {
-        path: "/dashboard",
-        name: "Dashboard",
+        path: '/dashboard',
+        name: 'Dashboard',
         component: Dashboard,
-        meta: { authOnly: false }
     }];
 
 const router = createRouter({
@@ -34,27 +29,33 @@ function isLoggedIn() {
 }
 
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.authOnly)) {
-        if (!isLoggedIn()) {
-            next({
-                path: '/login',
-                query: { redirect: to.fullPath }
-            });
-        } else {
-            next();
-        }
-    } else if (to.matched.some(record => record.meta.guestOnly)) {
-        if (isLoggedIn()) {
-            next({
-                path: '/dashboard',
-                query: { redirect: to.fullPath }
-            });
-        } else {
-            next();
-        }
-    } else {
-        next();
+    const isGuestOnly = to.matched.some(record => record.meta.guestOnly);
+
+    if (isGuestOnly && !store.getters.isAuthenticated) {
+        next()
+
+        return;
     }
+
+    if (isGuestOnly && store.getters.isAuthenticated) {
+        next({
+            path: '/dashboard'
+        });
+
+        return;
+    }
+
+    if (!isGuestOnly && !store.getters.isAuthenticated) {
+        next({
+            path: '/login',
+            query: { redirect: to.fullPath }
+        });
+
+        return;
+    }
+
+    next();
+
 });
 
 export default router;

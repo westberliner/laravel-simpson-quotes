@@ -1,4 +1,4 @@
-import { login, getAuthorizedUser } from '@api/queries/Auth.gql'
+import { login, logout, getAuthorizedUser } from '@api/queries/Auth.gql'
 import apolloProvider from '@api/Client'
 
 export default {
@@ -25,6 +25,13 @@ export default {
         'AUTH_AUTHENTICATE': (state: any, authenticatedUser: any) => {
             state.status = 'success'
             state.authenticatedUser = authenticatedUser
+        },
+        'AUTH_INVALIDATE': (state: any) => {
+            state.status = 'success'
+            state.authenticatedUser = null
+            state.token = null
+            localStorage.setItem('authorization', '')
+            apolloProvider.defaultClient.resetStore()
         }
     },
     actions: {
@@ -41,7 +48,7 @@ export default {
                     throw error;
                 });
         },
-        'AUTH_AUTHENTICATE': ({commit, dispatch}: any) => {
+        'AUTH_AUTHENTICATE': ({commit}: any) => {
             return apolloProvider.defaultClient.query({query: getAuthorizedUser})
                 .then((result:any) => {
                     commit('AUTH_AUTHENTICATE', result.data.me);
@@ -51,7 +58,19 @@ export default {
 
                     throw error;
                 });
+        },
+        'AUTH_INVALIDATE': ({commit}: any) => {
+            return apolloProvider.defaultClient.mutate({mutation: logout})
+                .then((result:any) => {
+                    commit('AUTH_INVALIDATE');
+                })
+                .catch(error => {
+                    commit('AUTH_ERROR', error);
+
+                    throw error;
+                });
         }
+
     },
     getters: {
         authenticatedUser: (state: any) => state.authenticatedUser,

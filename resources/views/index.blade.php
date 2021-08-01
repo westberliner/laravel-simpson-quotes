@@ -14,6 +14,6 @@
         <main-menu></main-menu>
         <router-view></router-view>
     </div>
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/App.js') }}"></script>
     </body>
 </html>

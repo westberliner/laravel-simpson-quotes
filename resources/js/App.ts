@@ -6,7 +6,7 @@ import router from './router/Route'
 import mainMenu from './components/MainMenu.vue'
 
 const app = createApp({
-    mounted() {
+    beforeMount() {
         const store = this.$store.getters;
         if (store.isAuthenticated && store.authenticatedUser === null) {
             this.$store.dispatch('AUTH_AUTHENTICATE');

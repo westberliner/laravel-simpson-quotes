@@ -23,7 +23,7 @@ mix.alias({
 mix.webpackConfig({
 
 })
-mix.ts('resources/js/app.ts', 'public/js').vue();
+mix.ts('resources/js/App.ts', 'public/js').vue();
 mix.sass('resources/sass/app.scss', 'public/css');
 mix.graphql();
 mix.options({
