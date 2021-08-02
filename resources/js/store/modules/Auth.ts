@@ -43,9 +43,9 @@ export default {
                     const authorizationToken = `${result.data.login.token_type} ${result.data.login.token}`;
                     commit('AUTH_SUCCESS', authorizationToken);
                 }).catch(error => {
-                    commit('AUTH_ERROR', error);
+                    commit('AUTH_ERROR');
 
-                    throw error;
+                    throw error.message;
                 });
         },
         'AUTH_AUTHENTICATE': ({commit}: any) => {
@@ -54,9 +54,9 @@ export default {
                     commit('AUTH_AUTHENTICATE', result.data.me);
                 })
                 .catch(error => {
-                    commit('AUTH_ERROR', error);
+                    commit('AUTH_ERROR');
 
-                    throw error;
+                    throw error.message;
                 });
         },
         'AUTH_INVALIDATE': ({commit}: any) => {
@@ -65,9 +65,9 @@ export default {
                     commit('AUTH_INVALIDATE');
                 })
                 .catch(error => {
-                    commit('AUTH_ERROR', error);
+                    commit('AUTH_ERROR');
 
-                    throw error;
+                    throw error.message;
                 });
         }
 

@@ -2,7 +2,8 @@ import { createWebHistory, createRouter } from 'vue-router';
 import { store } from '../store/Store';
 import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
-import Dashboard from '../views/Dashboard.vue';
+import Users from '../views/Users.vue';
+import Characters from '../views/Characters.vue';
 
 const routes = [{
         path: '/',
@@ -14,10 +15,14 @@ const routes = [{
         component: Login,
         meta: { guestOnly: true }
     }, {
-        path: '/dashboard',
-        name: 'Dashboard',
-        component: Dashboard,
-    }];
+        path: '/users',
+        name: 'Users',
+        component: Users,
+    }, {
+    path: '/characters',
+    name: 'Characters',
+    component: Characters,
+}];
 
 const router = createRouter({
     history: createWebHistory(),

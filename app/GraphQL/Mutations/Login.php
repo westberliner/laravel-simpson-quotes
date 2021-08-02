@@ -3,6 +3,7 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\User;
+use GraphQL\Error\Error;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\NewAccessToken;
 
