@@ -2,7 +2,7 @@
     <ul class="flex">
         <template v-for="(route, index) in routes" :key="index">
             <li v-if="isVisible(route, this)" class="mr-6">
-                <router-link class="text-blue-500 hover:text-blue-800" to="{{route.path}}">{{route.name}}</router-link>
+                <router-link class="text-blue-500 hover:text-blue-800" :to="route.path">{{route.name}}</router-link>
             </li>
         </template>
         <li v-if="isAuthenticated" class="mr-6"><a href="#" @click="logout" class="text-blue-500 hover:text-blue-800">Logout</a></li>
