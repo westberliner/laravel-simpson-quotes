@@ -26,16 +26,37 @@ export type AccessToken = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  /** Log in to a new session and get the user. */
   login: AccessToken;
-  /** Log out from the current session, showing the user one last time. */
   logout?: Maybe<User>;
+  createUser: User;
+  updateUser: User;
+  deleteUser: User;
 };
 
 
 export type MutationLoginArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationCreateUserArgs = {
+  name: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  id: Scalars['Int'];
+  name?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  password?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationDeleteUserArgs = {
+  id: Scalars['Int'];
 };
 
 /** Allows ordering a list of records. */
@@ -141,7 +162,7 @@ export enum Trashed {
 
 export type User = {
   __typename?: 'User';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   name: Scalars['String'];
   email: Scalars['String'];
   created_at: Scalars['DateTime'];
@@ -205,11 +226,16 @@ export type LogoutMutation = (
 
 export type UserFieldsFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'id' | 'name' | 'email'>
+  & Pick<User, 'id' | 'name' | 'email' | 'updated_at' | 'created_at'>
+);
+
+export type PaginatorFieldsFragment = (
+  { __typename?: 'PaginatorInfo' }
+  & Pick<PaginatorInfo, 'total' | 'currentPage' | 'perPage'>
 );
 
 export type GetUsersQueryVariables = Exact<{
-  currentPage: Scalars['Int'];
+  page: Scalars['Int'];
 }>;
 
 
@@ -217,7 +243,10 @@ export type GetUsersQuery = (
   { __typename?: 'Query' }
   & { users?: Maybe<(
     { __typename?: 'UserPaginator' }
-    & { data: Array<(
+    & { paginatorInfo: (
+      { __typename?: 'PaginatorInfo' }
+      & PaginatorFieldsFragment
+    ), data: Array<(
       { __typename?: 'User' }
       & UserFieldsFragment
     )> }
@@ -235,6 +264,50 @@ export type GetUserQuery = (
     { __typename?: 'User' }
     & UserFieldsFragment
   )> }
+);
+
+export type CreateUserMutationVariables = Exact<{
+  name: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type CreateUserMutation = (
+  { __typename?: 'Mutation' }
+  & { createUser: (
+    { __typename?: 'User' }
+    & UserFieldsFragment
+  ) }
+);
+
+export type UpdateUserMutationVariables = Exact<{
+  id: Scalars['Int'];
+  name?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  password?: Maybe<Scalars['String']>;
+}>;
+
+
+export type UpdateUserMutation = (
+  { __typename?: 'Mutation' }
+  & { updateUser: (
+    { __typename?: 'User' }
+    & UserFieldsFragment
+  ) }
+);
+
+export type DeleteUserMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteUserMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteUser: (
+    { __typename?: 'User' }
+    & UserFieldsFragment
+  ) }
 );
 
 }

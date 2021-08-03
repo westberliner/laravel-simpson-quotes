@@ -14,4 +14,10 @@ declare module "*/User.gql" {
   export const getUsers: TypedDocumentNode<GetUsersQueryVariables, GetUsersQuery>;
   import { GetUserQuery, GetUserQueryVariables } from "@codegen-types";
   export const getUser: TypedDocumentNode<GetUserQueryVariables, GetUserQuery>;
+  import { CreateUserMutation, CreateUserMutationVariables } from "@codegen-types";
+  export const createUser: TypedDocumentNode<CreateUserMutationVariables, CreateUserMutation>;
+  import { UpdateUserMutation, UpdateUserMutationVariables } from "@codegen-types";
+  export const updateUser: TypedDocumentNode<UpdateUserMutationVariables, UpdateUserMutation>;
+  import { DeleteUserMutation, DeleteUserMutationVariables } from "@codegen-types";
+  export const deleteUser: TypedDocumentNode<DeleteUserMutationVariables, DeleteUserMutation>;
 }

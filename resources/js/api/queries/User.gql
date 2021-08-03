@@ -3,11 +3,22 @@ fragment userFields on User {
     id
     name
     email
+    updated_at
+    created_at
+}
+
+fragment paginatorFields on PaginatorInfo {
+    total
+    currentPage
+    perPage
 }
 
 #Queries
-query getUsers($currentPage: Int!) {
-    users(page: $currentPage) {
+query getUsers($page: Int!) {
+    users(page: $page) {
+        paginatorInfo {
+            ...paginatorFields
+        }
         data {
             ...userFields
         }
@@ -19,3 +30,23 @@ query getUser($id: Int!) {
         ...userFields
     }
 }
+
+#Mutations
+mutation createUser($name: String!, $email: String!, $password: String!) {
+    createUser(name: $name, email: $email, password: $password) {
+        ...userFields
+    }
+}
+
+mutation updateUser($id: Int!, $name: String, $email: String, $password: String) {
+    updateUser(id: $id, name: $name, email: $email, password: $password) {
+        ...userFields
+    }
+}
+
+mutation deleteUser($id: Int!) {
+    deleteUser(id: $id) {
+        ...userFields
+    }
+}
+
