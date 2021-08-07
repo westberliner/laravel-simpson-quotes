@@ -17,24 +17,27 @@ export default {
     computed: {
         ...mapGetters(['isAuthenticated', 'authenticatedUser']),
         routes() {
-            return this.$router.options.routes;
+            return this.$router.options.routes
         }
     },
     methods: {
         logout() {
             this.$store.dispatch('AUTH_INVALIDATE').then(() => {
-                this.$router.push('Login');
+                this.$router.push('Login')
             })
         },
         isVisible(route, self) {
+            if (route.meta?.routeOnly) {
+                return false
+            }
             if(!self.isAuthenticated && route.meta?.guestOnly) {
-                return true;
+                return true
             }
             if(self.isAuthenticated && !route.meta?.guestOnly) {
-                return true;
+                return true
             }
 
-            return false;
+            return false
         }
     }
 };

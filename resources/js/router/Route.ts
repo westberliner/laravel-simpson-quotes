@@ -2,7 +2,9 @@ import { createWebHistory, createRouter } from 'vue-router';
 import { store } from '../store/Store';
 import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
-import Users from '../views/Users.vue';
+import Users from '../views/User/List.vue';
+import User from '../views/User/View.vue';
+import UserEdit from '../views/User/Edit.vue';
 import Characters from '../views/Characters.vue';
 
 const routes = [{
@@ -18,6 +20,17 @@ const routes = [{
         path: '/users',
         name: 'Users',
         component: Users,
+
+    },{
+        path: '/users/:id',
+        name: 'User View',
+        component: User,
+        meta: { routeOnly: true }
+    },{
+        path: '/users/:id/edit',
+        name: 'User Edit',
+        component: UserEdit,
+        meta: { routeOnly: true }
     }, {
     path: '/characters',
     name: 'Characters',

@@ -5,6 +5,7 @@
 * Object Value
 * Write via message broker + subscription
 * mailable
+* more types
 * quotes crud
     * create
     * update
