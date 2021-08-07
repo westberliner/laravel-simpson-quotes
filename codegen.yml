@@ -16,9 +16,3 @@ generates:
           content: "}"
       - typescript
       - typescript-operations
-
-#  resources/js/types/queries.d.ts:
-#    - typescript-graphql-files-modules
-#  resources/js/types/graphql.types.ts:
-#    - typescript
-#    - typescript-operations

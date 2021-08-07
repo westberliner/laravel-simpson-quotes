@@ -24,7 +24,7 @@
             class="form-control"
             id="password"
         /><br>
-        <button @click.prevent="update" class="btn btn-primary btn-block">Login</button>
+        <button @click.prevent="update" class="btn btn-primary btn-block">Save</button>
     </form>
 </template>
 <script>

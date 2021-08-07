@@ -1,4 +1,5 @@
-import { getUsers, getUser, updateUser } from '@api/queries/User.gql'
+import { Cache } from 'apollo-cache'
+import { getUsers, getUser, updateUser, deleteUser } from '@api/queries/User.gql'
 import apolloProvider from '@api/Client'
 
 export default {
@@ -22,7 +23,9 @@ export default {
         'USER_UPDATE': (state: any, user: any) => {
             state.user = user
         },
-        'USER_DELETE': (state: any) => {},
+        'USER_DELETE': (state:any, id: any) => {
+            delete state.users[id]
+        },
         'USER_ERROR': (state: any) => {
             state.status = 'error'
         },
@@ -31,9 +34,11 @@ export default {
         }
     },
     actions: {
-        'USER_LIST': ({commit}: any, page: number) => {
-            return apolloProvider.defaultClient.query({query: getUsers, variables: {page: page}})
-                .then(result => {
+        'USER_LIST': ({commit}: any, page: number, refetch = false) => {
+            return apolloProvider.defaultClient.query({
+                query: getUsers,
+                variables: {page: page}
+            }).then(result => {
                     commit('USER_LIST', result.data.users.data);
                     commit('USER_PAGINATION', result.data.users.paginatorInfo);
                 }).catch(error => {
@@ -54,10 +59,8 @@ export default {
         },
         'USER_CREATE': (state: any) => {},
         'USER_UPDATE': ({commit}: any, user: any) => {
-            console.log(user)
             return apolloProvider.defaultClient.mutate({mutation: updateUser, variables: user})
                 .then(result => {
-                    console.log(result.data.user)
                     commit('USER_UPDATE', result.data.updateUser);
                 }).catch(error => {
                     commit('USER_ERROR');
@@ -65,7 +68,16 @@ export default {
                     throw error.message;
                 });
         },
-        'USER_DELETE': (state: any) => {}
+        'USER_DELETE': ({commit, dispatch, state}: any, id: Number) => {
+            return apolloProvider.defaultClient.mutate({mutation: deleteUser, variables: {id: id}})
+                .then(() => {
+                    commit('USER_DELETE', id)
+                }).catch(error => {
+                    commit('USER_ERROR');
+
+                    throw error.message;
+                });
+        }
     },
     getters: {
         users: (state: any) => state.users,

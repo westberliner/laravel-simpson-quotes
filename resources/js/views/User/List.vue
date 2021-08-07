@@ -11,7 +11,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(user, index) in users" :key="index">
+            <tr v-for="(user) in users" :key="user.id">
                 <td>{{ user.id }}</td>
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
@@ -20,7 +20,7 @@
                 <td>
                     <router-link class="text-blue-500 hover:text-blue-800" :to="`/users/${user.id}/edit`">Edit</router-link>
                     <router-link class="text-blue-500 hover:text-blue-800" :to="`/users/${user.id}`">View</router-link>
-                    <a class="text-blue-500 hover:text-blue-800">Delete</a>
+                    <a class="text-blue-500 hover:text-blue-800" @click="deleteUser(user.id)">Delete</a>
                 </td>
             </tr>
         </tbody>
@@ -46,6 +46,11 @@ export default {
     },
     computed: {
         ...mapGetters(['users', 'usersLoaded', 'pagination'])
+    },
+    methods: {
+        deleteUser(id) {
+            this.$store.dispatch('USER_DELETE', parseInt(id))
+        }
     },
     watch: {
         "$route": {
