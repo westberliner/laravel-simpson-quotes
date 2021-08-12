@@ -3,6 +3,24 @@ import { createHttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { setContext } from 'apollo-link-context'
 import VueApollo from 'vue-apollo'
+import Echo from 'laravel-echo'
+import PusherConnector from 'pusher-js'
+
+import { createLighthouseSubscriptionLink } from '@thekonz/apollo-lighthouse-subscription-link'
+
+const customConnector = (options:any) => {
+    console.log(options)
+    return new PusherConnector('abc', options);
+}
+
+const echoClient = new Echo({
+    broadcaster: PusherConnector,
+    key: process.env.MIX_PUSHER_APP_KEY,
+    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+    forceTLS: false,
+    wsHost: window.location.hostname,
+    wsPort: 6001
+});
 
 // HTTP connection to the API
 const httpLink = createHttpLink({
